@@ -1,0 +1,207 @@
+    ---
+title: "R Final classProject Code"
+author: "Ruth Holley"
+date: "6/1/2019"
+output: html_document
+---
+Load our data 
+Cancer Survival Rates in the United States
+```{r}
+library(dplyr)
+library(ggplot2)
+#Survival Rates in the United States
+cancersurvival <- read.csv("/home/ruth/Downloads/cancer-survival-Rates-in-usa.csv",header = TRUE, sep = ',')
+
+summary(cancersurvival)
+str(cancersurvival)
+dim(cancersurvival)
+```
+
+1. Which cancers have the greatest survival rate in the United States
+
+```{r}
+c2<-cancersurvival%>%
+  select(Survival.Rate,Year,CancerType)%>%
+  group_by(Year,CancerType)%>%
+  arrange(desc(Survival.Rate))
+c2
+	
+```
+
+
+```{r}
+ggplot(c2, aes(x =CancerType, y=Survival.Rate,fill =CancerType,)) +
+geom_bar(stat = "identity")  + ggtitle("Which cancers have the greatest survival rate in USA")
+```
+
+2. Which types of cancer affects mostly women versus men?
+```{r }
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+c3<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Gender %in% c("females","males") & CancerType %!in% "All cancers" )
+  
+c3
+
+```
+
+```{r}
+
+ggplot(c3, aes(x=Gender, y=CancerType, fill=Survival.Rate)) +
+geom_bar(stat="identity", position=position_dodge()) +
+    ggtitle("Which types of cancer affects mostly women versus men?")
+
+
+
+
+```
+
+3. Which type of cancer has the highest survival rate in both genders in 10 year intervals.
+
+**Graphs starts here for 10 year intervals** 
+Top 5 cancer rates-females
+```{r}
+t5<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(1973, 1983), CancerType %in% c("Thyroid","Skin","Breast","Bladder","Cervix uteri"), Gender=="females")
+t5
+```
+
+Female-Top 5 cancers year 1973-1983--GGPLOT
+```{r}
+ggplot(t5, aes(x =Year, y=Survival.Rate,fill =CancerType,)) +
+geom_bar(stat = "identity") + ggtitle("Female Cancer Survial Rate from 1973-1983?")
+```
+
+Top 5 cancer rates-males
+```{r}
+t6<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(1973, 1983), CancerType %in% c("Thyroid","Skin","Prostate","Bladder","Myeloma"), Gender=="males")
+t6
+```
+
+Top 5 cancer-males-GGPLOT
+```{r}
+ggplot(t6, aes(x =Year, y=Survival.Rate,fill =CancerType)) +
+geom_bar(stat = "identity") + ggtitle("Male Cancer Survial Rate from 1973-1983?")
+```
+
+Top 5 Cancer Survival Rates--1995-2006 Female graph code
+```{r}
+t7<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(1995, 2006), CancerType %in% c("Thyroid","Skin","Breast","Bladder","Cervix uteri"), Gender=="females")
+t7
+```
+
+1995-2006--Female-GGPLOT
+```{r}
+ggplot(t7, aes(x =Year, y=Survival.Rate,fill =CancerType)) +
+geom_bar(stat = "identity")  + ggtitle("Female Cancer Survial Rate from 1995-2006?")
+```
+
+Top 5 Cancer Rates-1995-2006 male graph code
+```{r}
+t8<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(1995, 2006), CancerType %in% c("Thyroid","Skin","Prostate","Bladder","Colon and rectum"), Gender=="males")
+t8
+```
+
+1995-2006 male graph GGPLOT
+```{r}
+ggplot(t8, aes(x =Year, y=Survival.Rate,fill =CancerType)) +
+geom_bar(stat = "identity")  + ggtitle("Male Cancer Survial Rate from 1995-2006?")
+```
+
+Top 5 cancer survival rates-females (2006-2013)
+```{r}
+t9<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(2006,2013), CancerType %in% c("Thyroid","Skin","Breast","Bladder","Cervix uteri"), Gender=="females")
+t9
+```
+
+2006-2013-Female-GGPLOT
+```{r}
+ggplot(t9, aes(x =Year, y=Survival.Rate,fill =CancerType)) +
+geom_bar(stat = "identity") + ggtitle("Female Cancer Survial Rate from 2006-2013?")
+```
+
+To 5 Cancer Survival Rates 2006-2013 male graph code
+```{r}
+t10<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(2006, 2013), CancerType %in% c("Thyroid","Skin","Prostate","Bladder","Colon and rectum"), Gender=="males")
+t10
+```
+
+2006-2013-male-GGPLOT
+```{r}
+ggplot(t10, aes(x =Year, y=Survival.Rate,fill =CancerType)) +
+geom_bar(stat = "identity")+ ggtitle("Male Cancer Survial Rate from 2006-2013?")
+
+```
+
+This is how we determined what were the top 5 cancer rates for males and females. We did a search on each year 1973,1983, 1995,2006,2013 for males and females. After this we sorted by Survival Rate in desending order and picked the top five cancers that had the highest survival rate per gender and used this information as part of our analysis for Question #3.
+
+#women
+```{r}
+cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Gender == "females" & Year==2013)%>%
+  group_by(CancerType)%>%
+  arrange(desc(Survival.Rate))
+```
+
+#mem
+```{r}
+cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Gender == "males" & Year==2013)%>%
+  arrange(desc(Survival.Rate))
+```
+
+4. Has the survival rate increased over a mostly 50 years interval?
+```{r}
+t11<-cancersurvival%>%
+  select(Survival.Rate,Year,Gender,CancerType)%>%
+  filter(Year %in% c(1963, 2013)) 
+
+t11
+```
+
+
+```{r}
+ggplot(t11, aes(x =Year, y=Survival.Rate, fill=Survival.Rate)) +
+geom_bar(stat = "identity")+
+  ggtitle("Has the survival rate increased over a 50 year interval?")
+```
+
+5. Is race a factor in cancer survival rate?
+```{r}
+t12<-cancersurvival%>%
+  select(Survival.Rate,Year,Race,CancerType)%>%
+  filter(Race %in% c("Black","White"))%>%
+  group_by(CancerType)%>%
+  arrange(desc(Survival.Rate))
+t12
+```
+
+
+```{r}
+ggplot(t12, aes(x =Race, y=Survival.Rate, fill=Race)) +
+geom_bar(stat = "identity") +ggtitle("Could Race be a factor in Cancer Survival Rates?")
+    
+```
+
+
+
+
+
+
+
+
